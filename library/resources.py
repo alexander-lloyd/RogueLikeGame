@@ -43,6 +43,7 @@ class SpriteSheet:
 
 class Resources:
     icon = pygame.image.load('assets/icon.png')
+    icon2 = pygame.transform.scale2x(icon)
 
     @staticmethod
     def load_resources():

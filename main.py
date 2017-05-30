@@ -1,8 +1,10 @@
 from library.game import Game
-from library.states import SplashScreen
+from library import GameScreen, SplashScreen
 
 g = Game()
-state = SplashScreen()
-g.add_state(state)
-g.set_current_state(state)
+loading_state = SplashScreen()
+game_state = GameScreen()
+g.add_state('loading', loading_state)
+g.add_state('game', game_state)
+g.set_current_state('loading')
 g.run()

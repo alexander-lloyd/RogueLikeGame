@@ -1,5 +1,7 @@
 import logging
 
+import pygame
+
 class GameConfig:
     LOG_LEVEL = logging.DEBUG
     SCREEN_WIDTH = 640
@@ -10,3 +12,6 @@ class GameConfig:
 
     COLOUR_BLACK = (0, 0, 0)
     COLOUR_RED = (255, 0, 0)
+
+    # Custom Events
+    CHANGE_STATE_EVENT = pygame.USEREVENT + 1

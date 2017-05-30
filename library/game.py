@@ -4,15 +4,15 @@ import os
 import pygame
 
 from config import GameConfig
-from .display import DisplayManager
-from .event import EventManager
-from .resources import Resources
-from .states import BaseState, State
+from library.display import DisplayManager
+from library.event import EventManager, EventListener
+from library.resources import Resources
+from library.states import State
 
 os.environ['SDL_VIDEO_CENTERED'] = "1"
 
 
-class Game(BaseState):
+class Game(EventListener):
     def __init__(self):
         self.running = True
 
@@ -29,7 +29,7 @@ class Game(BaseState):
 
         self.temp_surface = None
 
-        self.states = []
+        self.states = {}
         self.current_state = None
 
         self.show_fps = False
@@ -74,7 +74,6 @@ class Game(BaseState):
         surface = self.current_state.render(surface)
         return surface
 
-
     def update(self, dt: int):
         self.current_state.update(dt)
 
@@ -92,11 +91,14 @@ class Game(BaseState):
                 self.display_manager.toggle_full_screen()
             elif event.key == pygame.K_F5:
                 self.show_fps = not self.show_fps
+        elif event.type == GameConfig.CHANGE_STATE_EVENT:
+            new_state = event.new_state
+            self.set_current_state(new_state)
 
-    def add_state(self, state: State):
-        self.states.append(state)
+    def add_state(self, state_name: str, state: State):
         state.set_event_manager(self.eventManager)
+        self.states.update({state_name: state})
         self.eventManager.add_listener(state)
 
-    def set_current_state(self, state):
-        self.current_state = state
+    def set_current_state(self, state: str):
+        self.current_state = self.states.get(state)
