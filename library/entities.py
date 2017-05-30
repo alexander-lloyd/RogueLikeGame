@@ -19,3 +19,9 @@ class Player(Entity):
 
     def update(self, dt: int):
         pass
+
+
+class Tile(pygame.sprite.DirtySprite):
+    def __init__(self, block_path):
+        super(Tile, self).__init__()
+        self.block_path = block_path

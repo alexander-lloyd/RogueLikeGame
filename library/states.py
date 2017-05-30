@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 import pygame
 
 from config import GameConfig
@@ -9,14 +7,11 @@ from library.resources import Resources
 
 
 class BaseState(EventListener):
-    @abstractmethod
-    def render(self, surface: pygame.Surface):
-        pass
+    def render(self, surface: pygame.Surface) -> pygame.Surface:
+        raise NotImplementedError()
 
-    @abstractmethod
     def update(self, dt: float):
-        pass
-
+        raise NotImplementedError()
 
 class State(BaseState):
     def __init__(self):
@@ -40,7 +35,7 @@ class SplashScreen(State):
 
         self.time_to_wait = 5.0
 
-    def render(self, surface: pygame.Surface):
+    def render(self, surface: pygame.Surface) -> pygame.Surface:
         surface.fill(GameConfig.COLOUR_RED)
         rect = surface.get_rect()
         image = SplashScreen.logo
@@ -66,8 +61,24 @@ class GameScreen(State):
         pass
 
     def notify(self, event: pygame.event.Event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                pygame.event.post(pygame.event.Event(GameConfig.CHANGE_STATE_EVENT, {'new_state': 'pause'}))
+
+    def render(self, surface: pygame.Surface) -> pygame.Surface:
+        surface.fill(GameConfig.COLOUR_BLACK)
+        return surface
+
+
+class PauseState(State):
+    def notify(self, event: pygame.event.Event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_p:
+                pygame.event.post(pygame.event.Event(GameConfig.CHANGE_STATE_EVENT, {'new_state': 'game'}))
+                print("Going to Game")
+
+    def update(self, dt: float):
         pass
 
-    def render(self, surface: pygame.Surface):
-        surface.fill(GameConfig.COLOUR_BLACK)
+    def render(self, surface: pygame.Surface) -> pygame.Surface:
         return surface

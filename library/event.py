@@ -1,10 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 import pygame
 
 
 class EventListener(ABC):
-    @abstractmethod
     def notify(self, event: pygame.event.Event):
         raise NotImplementedError()
 
@@ -24,6 +23,9 @@ class EventManager:
 
         assert isinstance(listener, EventListener)
         self.listeners.append(listener)
+
+    def delete_listener(self, listener: EventListener):
+        self.listeners.remove(listener)
 
     def notify(self, event: pygame.event.Event):
         for listener in self.listeners:

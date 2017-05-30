@@ -98,7 +98,13 @@ class Game(EventListener):
     def add_state(self, state_name: str, state: State):
         state.set_event_manager(self.eventManager)
         self.states.update({state_name: state})
-        self.eventManager.add_listener(state)
 
     def set_current_state(self, state: str):
-        self.current_state = self.states.get(state)
+        if self.current_state is not None:
+            self.eventManager.delete_listener(self.current_state)
+
+        state_object = self.states.get(state)
+
+        self.eventManager.add_listener(state_object)
+
+        self.current_state = state_object
