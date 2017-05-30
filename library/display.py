@@ -31,3 +31,6 @@ class DisplayManager:
 
     def create_screen(self):
         self._set_mode()
+
+    def set_icon(self, icon: pygame.Surface):
+        pygame.display.set_icon(icon)

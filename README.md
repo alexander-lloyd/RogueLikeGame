@@ -6,3 +6,8 @@
  - [ ] Graphics
  - [ ] Bundle for all major operating systems
  - [ ] Implement Game
+ 
+ 
+License
+
+- [ ] Character: Thank you to [Kenny](http://kenney.nl/assets/roguelike-characters). 

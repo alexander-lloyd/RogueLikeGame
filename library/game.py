@@ -4,6 +4,7 @@ import pygame
 from config import GameConfig
 from .display import DisplayManager
 from .event import EventListener, EventManager
+from .resources import Resources
 
 
 class Game(EventListener):
@@ -15,10 +16,12 @@ class Game(EventListener):
         self.running = True
 
         self.logger = logging.Logger("Game")
+        self.logger.setLevel(GameConfig.LOG_LEVEL)
         self.logger.debug("Starting Game")
 
         Game.init()
         self.display_manager = DisplayManager()
+        self.display_manager.set_icon(Resources.icon)
         self.clock = pygame.time.Clock()
         self.eventManager = EventManager()
         self.eventManager.add_listener(self)
@@ -38,7 +41,10 @@ class Game(EventListener):
 
     def _gameloop(self):
         self.display_manager.create_screen()
+        # Loading Screen
         self.temp_surface = self.temp_surface.convert()
+
+        Resources.load_resources()
 
         while self.running:
             self.check_events()
@@ -50,6 +56,8 @@ class Game(EventListener):
 
     def render(self):
         self.temp_surface.fill(GameConfig.COLOUR_RED)
+
+        self.temp_surface.blit(Resources.character, (16,16))
 
         self.display_manager.main_surface.blit(self.temp_surface, (0, 0))
 
