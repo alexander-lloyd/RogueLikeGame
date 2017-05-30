@@ -11,3 +11,4 @@
 License
 
 - [ ] Character: Thank you to [Kenny](http://kenney.nl/assets/roguelike-characters). 
+- [ ] States & Loading: Thank you to [Mekire](https://github.com/Mekire/pygame-multiscene-template-with-movie).

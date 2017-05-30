@@ -1,13 +1,18 @@
 import logging
+import os
+
 import pygame
 
 from config import GameConfig
 from .display import DisplayManager
-from .event import EventListener, EventManager
+from .event import EventManager
 from .resources import Resources
+from .states import BaseState, State
+
+os.environ['SDL_VIDEO_CENTERED'] = "1"
 
 
-class Game(EventListener):
+class Game(BaseState):
     def __init__(self):
         self.running = True
 
@@ -22,7 +27,13 @@ class Game(EventListener):
         self.eventManager = EventManager()
         self.eventManager.add_listener(self)
 
-        self.temp_surface = pygame.Surface(GameConfig.SCREEN_DIMENSIONS)
+        self.temp_surface = None
+
+        self.states = []
+        self.current_state = None
+
+        self.show_fps = False
+        self.caption = 'RogueLike Game'
 
     def run(self):
         self._gameloop()
@@ -38,26 +49,34 @@ class Game(EventListener):
     def _gameloop(self):
         self.display_manager.create_screen()
         # Loading Screen
-        self.temp_surface = self.temp_surface.convert()
+        self.temp_surface = pygame.display.get_surface()
 
         Resources.load_resources()
 
         while self.running:
+            dt = self.clock.tick(GameConfig.FPS) / 1000.0
             self.check_events()
+            self.update(dt)
+            surface = self.render(self.temp_surface)
 
-            self.render()
-            self.clock.tick(GameConfig.FPS)
+            self.display_manager.main_surface.blit(surface, (0, 0))
+            pygame.display.flip()
 
         Game.quit()
 
-    def render(self):
-        self.temp_surface.fill(GameConfig.COLOUR_RED)
+    def render(self, surface: pygame.Surface):
+        if self.show_fps:
+            fps = self.clock.get_fps()
+            caption = "{} - {:.2f} FPS".format(self.caption, fps)
+        else:
+            caption = self.caption
+        pygame.display.set_caption(caption)
+        surface = self.current_state.render(surface)
+        return surface
 
-        self.temp_surface.blit(Resources.character, (16, 16))
 
-        self.display_manager.main_surface.blit(self.temp_surface, (0, 0))
-
-        pygame.display.flip()
+    def update(self, dt: int):
+        self.current_state.update(dt)
 
     def check_events(self):
         for event in pygame.event.get():
@@ -71,3 +90,13 @@ class Game(EventListener):
                 self.running = False
             elif event.key == pygame.K_F1:
                 self.display_manager.toggle_full_screen()
+            elif event.key == pygame.K_F5:
+                self.show_fps = not self.show_fps
+
+    def add_state(self, state: State):
+        self.states.append(state)
+        state.set_event_manager(self.eventManager)
+        self.eventManager.add_listener(state)
+
+    def set_current_state(self, state):
+        self.current_state = state
