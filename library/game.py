@@ -8,10 +8,6 @@ from .resources import Resources
 
 
 class Game(EventListener):
-    def notify(self, event):
-        if event.type == pygame.QUIT:
-            self.running = False
-
     def __init__(self):
         self.running = True
 
@@ -21,7 +17,7 @@ class Game(EventListener):
 
         Game.init()
         self.display_manager = DisplayManager()
-        self.display_manager.set_icon(Resources.icon)
+        DisplayManager.set_icon(Resources.icon)
         self.clock = pygame.time.Clock()
         self.eventManager = EventManager()
         self.eventManager.add_listener(self)
@@ -57,7 +53,7 @@ class Game(EventListener):
     def render(self):
         self.temp_surface.fill(GameConfig.COLOUR_RED)
 
-        self.temp_surface.blit(Resources.character, (16,16))
+        self.temp_surface.blit(Resources.character, (16, 16))
 
         self.display_manager.main_surface.blit(self.temp_surface, (0, 0))
 
@@ -66,3 +62,12 @@ class Game(EventListener):
     def check_events(self):
         for event in pygame.event.get():
             self.eventManager.notify(event)
+
+    def notify(self, event):
+        if event.type == pygame.QUIT:
+            self.running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.running = False
+            elif event.key == pygame.K_F1:
+                self.display_manager.toggle_full_screen()

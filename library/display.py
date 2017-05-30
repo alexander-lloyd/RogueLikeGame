@@ -13,7 +13,7 @@ class DisplayManager:
         if not pygame.display.get_init():
             pygame.display.init()
 
-    def setFullScreen(self):
+    def toggle_full_screen(self):
         if pygame.display.get_driver() == 'x11':
             pygame.display.toggle_fullscreen()
             return
@@ -24,13 +24,14 @@ class DisplayManager:
 
     def _set_mode(self):
         if self.fullscreen:
-            self.flags = pygame.FULLSCREEN
+            self.flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
         else:
-            self.flags = 0
+            self.flags = pygame.DOUBLEBUF
         self.main_surface = pygame.display.set_mode(self.SCREEN_DIMENSIONS, self.flags)
 
     def create_screen(self):
         self._set_mode()
 
-    def set_icon(self, icon: pygame.Surface):
+    @staticmethod
+    def set_icon(icon: pygame.Surface):
         pygame.display.set_icon(icon)
