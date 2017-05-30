@@ -1,44 +1,30 @@
-from weakref import WeakKeyDictionary
+from abc import ABC, abstractmethod
 
-class Event:
-    def __init__(self, name: str, data: dict = None) -> object:
-        self.name = name
-        self.data = data
+import pygame
 
-    def getData(self) -> dict:
-        return self.data
 
-    def getName(self) -> str:
-        return self.name
-
-class CounterWeakDictionary(WeakKeyDictionary):
-    def __init__(self):
-        super().__init__()
-        self.counter = 0
-
-    def push(self, function):
-        self[self.counter] = function
-        self.counter += 1
-
-    def delete(self, func):
-        #TODO: Implement
-        pass
+class EventListener(ABC):
+    @abstractmethod
+    def notify(self, event: pygame.event.Event):
+        raise NotImplementedError()
 
 
 class EventManager:
     def __init__(self):
-        self.listeners = {}
+        self.listeners = []
 
-    def add_listener(self, event_type, ):
-        '''
-        :param event_type: int. Unique identifier of a type
+    def add_listener(self, listener: EventListener):
+        """
+        :param listener: object that wants to listener to events
         :return: None
         
         When adding a listener, this method takes care of creating a creating a reference in the dict above and adding 
         the listener object to it.
-        '''
+        """
 
-        if self.listeners.get(event_type, False):
-            self.listeners[event_type]
-        else:
-            self.listeners[event_type] = CounterWeakDictionary()
+        assert isinstance(listener, EventListener)
+        self.listeners.append(listener)
+
+    def notify(self, event: pygame.event.Event):
+        for listener in self.listeners:
+            listener.notify(event)

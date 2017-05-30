@@ -1,4 +1,3 @@
-
 class GameConfig:
     SCREEN_WIDTH = 640
     SCREEN_HEIGHT = 480
@@ -7,3 +6,4 @@ class GameConfig:
     FPS = 60
 
     COLOUR_BLACK = (0, 0, 0)
+    COLOUR_RED = (255, 0, 0)
